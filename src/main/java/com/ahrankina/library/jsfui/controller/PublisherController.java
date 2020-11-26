@@ -12,11 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.inject.Named;
 import java.util.List;
 
-@ManagedBean
+@Named
 @SessionScoped
 @Component
 @Getter
