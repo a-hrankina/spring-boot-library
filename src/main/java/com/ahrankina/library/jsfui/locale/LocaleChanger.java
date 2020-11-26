@@ -1,13 +1,15 @@
 package com.ahrankina.library.jsfui.locale;
 
 import com.ahrankina.library.jsfui.util.CookieHelper;
+import org.omnifaces.cdi.Eager;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Locale;
 
-@ManagedBean(eager = true)
+@Eager
+@Named
 @SessionScoped
 public class LocaleChanger implements Serializable {
     private Locale currentLocale = new Locale("ru");
