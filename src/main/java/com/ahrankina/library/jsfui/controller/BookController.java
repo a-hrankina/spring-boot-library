@@ -151,11 +151,9 @@ public class BookController extends AbstractController<Book> {
 
         RequestContext.getCurrentInstance().execute("PF('dialogEditBook').show()");
     }
-
+    
     private byte[] loadDefaultIcon() {
-        InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/no-cover.jpg");
-
-        try {
+        try (InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/no-cover.jpg")) {
             return IOUtils.toByteArray(stream);
         } catch (IOException e) {
             e.printStackTrace();

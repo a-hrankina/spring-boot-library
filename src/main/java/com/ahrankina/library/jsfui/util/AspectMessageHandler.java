@@ -33,7 +33,7 @@ public class AspectMessageHandler {
                 log.log(Level.WARNING, throwable.getMessage());
                 throwable.printStackTrace();
 
-                if (((UnexpectedRollbackException) throwable).getMostSpecificCause() instanceof com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException) {
+                if (((UnexpectedRollbackException) throwable).getMostSpecificCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
                     context.addMessage(null, new FacesMessage(null, bundle.getString("constraint_delete_record")));
                 }
             }

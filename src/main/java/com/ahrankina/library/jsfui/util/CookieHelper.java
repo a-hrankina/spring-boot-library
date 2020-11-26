@@ -5,8 +5,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CookieHelper {
+public final class CookieHelper {
     public static final String COOKIE_LANG = "spring-library-lang";
+
+    private CookieHelper() {
+    }
 
     public static void setCookie(String name, String value, int expiry) {
 
