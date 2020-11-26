@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+<h:body>
+    <ui:composition template="/templates/dictionaries/dictionaries-template.xhtml">
+
+        <ui:define name="content">
+            <ui:include src="/templates/dialogs/confirm-dialog.xhtml"/>
+            <p:tabView dynamic="true" cache="false" id="tabView">
+                <p:ajax event="tabChange" listener="#{dictionaryController.onTabChange}"/>
+
+                <p:tab title="#{msg.authors}" id="tabAuthors">
+                    <h:form id="authorForm">
+
+                        <p:dataTable id="authorList" var="author" value="#{authorController.lazyModel}"
+                                     paginatorPosition="bottom"
+                                     paginator="true"
+                                     rows="#{authorController.rowsCount}"
+                                     first="#{authorController.first}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks}
+                                                        {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     style="margin:5px" lazy="true"
+                                     rowsPerPageTemplate="20,50,100">
+
+                            <f:facet name="header">
+                                <p:outputLabel value="#{msg.founded}: #{authorController.authorPages.totalElements}"
+                                               id="authorCount"/>
+                            </f:facet>
+
+                            <p:column headerText="#{msg.name}">
+                                <p:commandLink title="#{msg.edit}" action="#{authorController.editAction()}"
+                                               update="@([id$=dialogAuthor])" process="@form" immediate="true">
+
+                                    <h:outputText value="#{author.fio}"/>
+                                    <f:setPropertyActionListener value="#{author}"
+                                                                 target="#{authorController.selectedAuthor}"/>
+                                </p:commandLink>
+                            </p:column>
+
+                            <p:column headerText="#{msg.birthday}">
+                                <p:commandLink title="#{msg.edit}" action="#{authorController.editAction()}"
+                                               update="@([id$=dialogAuthor])" process="@form" immediate="true">
+
+                                    <p:outputLabel value="#{author.birthday}" style="width:100%">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" type="date"/>
+                                    </p:outputLabel>
+
+                                    <f:setPropertyActionListener value="#{author}"
+                                                                 target="#{authorController.selectedAuthor}"/>
+
+                                </p:commandLink>
+
+                            </p:column>
+
+
+                            <!-- столбец с иконкой удаления-->
+                            <p:column style="width:50px">
+                                <p:commandLink title="#{msg.delete}"
+                                               action="#{authorController.deleteAction()}"
+                                               update="@([id$=authorList])" process="@form"
+                                               immediate="true"
+
+                                >
+
+                                    <o:graphicImage name="images/delete.png" styleClass="delete-icon" dataURI="true"/>
+
+                                    <p:confirm header="#{msg.confirm}" message="#{msg.prompt_delete}?"
+                                               icon="ui-icon-alert"/>
+
+                                    <!-- при выполнении действия deleteAction - записывает в переменную selectedAuthor текущего издателя, чтобы знать кого удалять -->
+                                    <f:setPropertyActionListener value="#{author}"
+                                                                 target="#{authorController.selectedAuthor}"/>
+
+                                </p:commandLink>
+
+                            </p:column>
+
+
+                            <!-- столбец с иконкой редактирования-->
+                            <p:column style="width:50px">
+                                <p:commandLink title="#{msg.edit}" action="#{authorController.editAction()}"
+                                               update="@([id$=dialogAuthor])" process="@form" immediate="true">
+
+                                    <o:graphicImage name="images/edit.png" styleClass="edit-icon" dataURI="true"/>
+
+                                    <!-- при выполнении действия editAction - записывает в переменную selectedAuthor текущего автора, чтобы в диалоговом окне отобразить его данные для редактирования -->
+                                    <f:setPropertyActionListener value="#{author}"
+                                                                 target="#{authorController.selectedAuthor}"/>
+
+                                </p:commandLink>
+                            </p:column>
+
+
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <!-- диалоговое окно для редактирования author -->
+                    <p:dialog id="dialogAuthor" header="#{msg.author}" widgetVar="dialogAuthor" resizable="false"
+                              modal="true"
+                              showEffect="fade"
+                              closeOnEscape="true"
+
+                    >
+
+                        <h:form id="dialogAuthorForm">
+
+                            <div class="popup-info">
+                                <div class="ava-info no-border">
+                                    <div class="block">
+                                        <p>#{msg.fio}</p>
+
+                                        <div class="ava-form">
+                                            <p:inputText id="fio" value="#{authorController.selectedAuthor.fio}"
+                                                         required="true"/>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="block">
+                                        <p>#{msg.birthday}</p>
+
+                                        <div class="ava-form">
+                                            <p:calendar value="#{authorController.selectedAuthor.birthday}"
+                                                        style="width:100%" pattern="yyyy-MM-dd"
+                                                        mask="true" required="true"/>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="block">
+
+                                        <div class="ava-form">
+
+                                            <p:commandButton value="#{msg.save}"
+                                                             actionListener="#{authorController.save}"
+                                                             update="@([id$=authorList])"
+                                                             process="@([id$=dialogAuthorForm])" style="float:right"/>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:tab>
+
+
+                <!--таб для редактирования жанров-->
+                <p:tab title="#{msg.genres}" id="tabGenres">
+                    <h:form id="genreForm">
+
+
+                        <p:dataTable id="genreList" var="genre" value="#{genreController.lazyModel}"
+                                     paginatorPosition="bottom"
+                                     paginator="true"
+                                     rows="#{genreController.rowsCount}"
+                                     first="#{genreController.first}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     style="margin:5px" lazy="true"
+                                     rowsPerPageTemplate="20,50,100"
+                        >
+
+                            <!-- сколько элементов найдено для отображения -->
+                            <f:facet name="header">
+                                <p:outputLabel value="#{msg.founded}: #{genreController.genrePages.totalElements}"
+                                               id="genreCount"/>
+
+                            </f:facet>
+
+                            <p:column headerText="#{msg.name}">
+
+                                <p:commandLink title="#{msg.edit}" action="#{genreController.editAction()}"
+
+                                               update="@([id$=dialogGenre])" process="@form" immediate="true">
+
+                                    <h:outputText value="#{genre.name}"/>
+
+                                    <!-- при выполнении действия editAction - записывает в переменную selectedGenre текущего жанра, чтобы в диалоговом окне отобразить его данные для редактирования -->
+                                    <f:setPropertyActionListener value="#{genre}"
+                                                                 target="#{genreController.selectedGenre}"/>
+
+                                </p:commandLink>
+
+                            </p:column>
+
+
+                            <!-- столбец с иконкой удаления-->
+                            <p:column style="width:50px">
+                                <p:commandLink title="#{msg.delete}"
+                                               action="#{genreController.deleteAction()}"
+                                               update="@([id$=genreList])" process="@form"
+                                               immediate="true">
+
+                                    <o:graphicImage name="images/delete.png" styleClass="delete-icon" dataURI="true"/>
+
+
+                                    <p:confirm header="#{msg.confirm}" message="#{msg.prompt_delete}?"
+                                               icon="ui-icon-alert"/>
+
+                                    <!-- при выполнении действия deleteAction - записывает в переменную selectedGenre текущего издателя, чтобы знать кого удалять -->
+                                    <f:setPropertyActionListener value="#{genre}"
+                                                                 target="#{genreController.selectedGenre}"/>
+
+                                </p:commandLink>
+                            </p:column>
+
+
+                            <!-- столбец с иконкой редактирования-->
+                            <p:column style="width:50px">
+                                <p:commandLink title="#{msg.edit}" action="#{genreController.editAction()}"
+
+                                               update="@([id$=dialogGenre])" process="@form" immediate="true">
+
+                                    <o:graphicImage name="images/edit.png" styleClass="edit-icon" dataURI="true"/>
+
+                                    <!-- при выполнении действия editAction - записывает в переменную selectedGenre текущего жанра, чтобы в диалоговом окне отобразить его данные для редактирования -->
+                                    <f:setPropertyActionListener value="#{genre}"
+                                                                 target="#{genreController.selectedGenre}"/>
+
+                                </p:commandLink>
+                            </p:column>
+
+
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <!-- диалоговое окно для редактирования genre -->
+                    <p:dialog id="dialogGenre" header="#{msg.genre}" widgetVar="dialogGenre" resizable="false"
+                              modal="true"
+                              showEffect="fade"
+                              closeOnEscape="true"
+
+                    >
+
+
+                        <h:form id="dialogGenreForm">
+
+
+                            <div class="popup-info">
+                                <div class="ava-info no-border">
+                                    <div class="block">
+                                        <p>#{msg.subj_name}</p>
+
+                                        <div class="ava-form">
+                                            <p:inputText id="nameGenre" value="#{genreController.selectedGenre.name}"/>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="block">
+                                        <div class="ava-form">
+
+                                            <p:commandButton value="#{msg.save}"
+                                                             actionListener="#{genreController.save}"
+                                                             update="@([id$=genreList])"
+                                                             process="@([id$=dialogGenreForm])" style="float:right"/>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:tab>
+
+
+                <!--таб для редактирования издателей-->
+                <p:tab title="#{msg.publishers}" id="tabPublishers">
+                    <h:form id="publisherForm">
+
+
+                        <p:dataTable id="publisherList" var="publisher" value="#{publisherController.lazyModel}"
+                                     paginatorPosition="bottom"
+                                     paginator="true"
+                                     rows="#{publisherController.rowsCount}"
+                                     first="#{publisherController.first}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     style="margin:5px" lazy="true"
+                                     rowsPerPageTemplate="20,50,100"
+                        >
+
+
+                            <!-- сколько элементов найдено для отображения -->
+                            <f:facet name="header">
+                                <p:outputLabel
+                                        value="#{msg.founded}: #{publisherController.publisherPages.totalElements}"
+                                        id="publisherCount"/>
+                            </f:facet>
+
+
+                            <p:column headerText="#{msg.name}">
+
+                                <p:commandLink title="#{msg.edit}" action="#{publisherController.editAction()}"
+                                               update="@([id$=dialogPublisher])" process="@form" immediate="true">
+
+                                    <h:outputText value="#{publisher.name}"/>
+
+                                    <!-- при выполнении действия editAction - записывает в переменную selectedPublisher текущего издателя, чтобы в диалоговом окне отобразить его данные для редактирования -->
+                                    <f:setPropertyActionListener value="#{publisher}"
+                                                                 target="#{publisherController.selectedPublisher}"/>
+
+                                </p:commandLink>
+
+
+                            </p:column>
+
+                            <!-- столбец с иконкой удаления-->
+                            <p:column style="width:50px">
+
+                                <p:commandLink title="#{msg.delete}"
+                                               action="#{publisherController.deleteAction()}"
+                                               update="@([id$=publisherList])" process="@form"
+                                               immediate="true"
+                                               id="deletePublisher"
+                                >
+
+                                    <o:graphicImage name="images/delete.png" styleClass="delete-icon" dataURI="true"/>
+
+                                    <p:confirm header="#{msg.confirm}" message="#{msg.prompt_delete}?"
+                                               icon="ui-icon-alert"/>
+
+                                    <!-- при выполнении действия deleteAction - записывает в переменную selectedPublisher текущего издателя, чтобы знать кого удалять -->
+                                    <f:setPropertyActionListener value="#{publisher}"
+                                                                 target="#{publisherController.selectedPublisher}"/>
+
+                                </p:commandLink>
+
+
+                            </p:column>
+
+
+                            <!-- столбец с иконкой редактирования-->
+                            <p:column style="width:50px">
+                                <p:commandLink title="#{msg.edit}" action="#{publisherController.editAction()}"
+                                               update="@([id$=dialogPublisher])" process="@form" immediate="true">
+
+                                    <o:graphicImage name="images/edit.png" styleClass="edit-icon" dataURI="true"/>
+
+                                    <!-- при выполнении действия editAction - записывает в переменную selectedPublisher текущего издателя, чтобы в диалоговом окне отобразить его данные для редактирования -->
+                                    <f:setPropertyActionListener value="#{publisher}"
+                                                                 target="#{publisherController.selectedPublisher}"/>
+
+                                </p:commandLink>
+                            </p:column>
+
+
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <!-- диалоговое окно для редактирования publisher -->
+                    <p:dialog id="dialogPublisher" header="#{msg.publisher}" widgetVar="dialogPublisher"
+                              resizable="false"
+                              modal="true"
+                              showEffect="fade"
+                              closeOnEscape="true"
+
+                    >
+
+
+                        <h:form id="dialogPublisherForm">
+
+                            <div class="popup-info">
+                                <div class="ava-info no-border">
+                                    <div class="block">
+                                        <p>#{msg.subj_name}</p>
+
+                                        <div class="ava-form">
+                                            <p:inputText id="namePublisher"
+                                                         value="#{publisherController.selectedPublisher.name}"/>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="block">
+                                        <div class="ava-form">
+
+
+                                            <p:commandButton value="#{msg.save}"
+                                                             actionListener="#{publisherController.save}"
+                                                             update="@([id$=publisherList])"
+                                                             process="@([id$=dialogPublisherForm])"
+                                                             style="float:right"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+
+
+        <!-- подставляем компонент для поиска справочных значений -->
+        <ui:define name="search">
+            <p:inputText style="margin-right:10px" placeholder="#{msg.search}" value="#{dictionaryController.searchText}"
+                         id="searchInput"/>
+
+            <p:commandButton value="#{msg.search}" actionListener="#{dictionaryController.search}" process="@form"/>
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>

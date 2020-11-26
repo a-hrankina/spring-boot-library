@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+>
+<f:view>
+    <div class="lang">
+
+        <h:form>
+
+            <div class="lang">
+                <h:commandLink actionListener="#{localeChanger.changeLocale('ru')}" value="#{msg.ru}"
+                               styleClass="#{localeChanger.currentLocale == 'ru' ? 'active':''} lang-link"/>
+
+                <h:commandLink actionListener="#{localeChanger.changeLocale('en')}" value="#{msg.en}"
+                               styleClass="#{localeChanger.currentLocale == 'en' ? 'active':''} lang-link"/>
+            </div>
+
+        </h:form>
+
+    </div>
+</f:view>
+</html>

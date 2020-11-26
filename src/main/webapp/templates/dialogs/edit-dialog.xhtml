@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<f:view>
+
+    <p:dialog id="dialogEditBook" header="#{msg.book}" widgetVar="dialogEditBook" resizable="false" modal="true"
+              showEffect="fade" width="750">
+
+        <p:ajax event="close" listener="#{bookController.onCloseDialog}" />
+
+        <h:form id="formEditBook">
+
+            <div class="popup-info">
+                <div class="avatar-box">
+                    <o:graphicImage width="240" height="320" cache="false" value="#{bookController.uploadedImage}"
+                                    rendered="#{not empty bookController.uploadedImage}" id="bookImage"
+                                    dataURI="true"/>
+
+                    <p:fileUpload id="imageUpload" fileUploadListener="#{bookController.uploadImage}"
+                                  mode="advanced"
+                                  auto="true"
+                                  dragDropSupport="true" label="#{msg.image_load}"
+                                  update="image_upload_messages @([id$=imageUpload])" sizeLimit="1000000"
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+
+                    <p:growl id="image_upload_messages" showDetail="true"/>
+
+                    <p:messages autoUpdate="true" redisplay="false"/>
+                </div>
+
+                <div class="ava-info">
+                    <div class="block">
+                        <p>#{msg.subj_name}</p>
+
+                        <div class="ava-form">
+                            <p:inputText id="inputBookName" value="#{bookController.selectedBook.name}" required="true" requiredMessage="#{msg.required_book_name}" />
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>#{msg.author}</p>
+
+                        <div class="ava-form">
+                            <p:autoComplete id="authorList" dropdown="true" converter="#{authorConverter}" var="author"
+                                            value="#{bookController.selectedBook.author}"
+                                            completeMethod="#{authorController.find}" itemLabel="#{author.fio}"
+                                            itemValue="#{author}" required="true" requiredMessage="#{msg.required_author}"/>
+
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>#{msg.genre}</p>
+
+                        <div class="ava-form">
+                            <p:autoComplete id="genreList" dropdown="true" converter="#{genreConverter}" var="genre"
+                                            value="#{bookController.selectedBook.genre}"
+                                            completeMethod="#{genreController.find}" itemLabel="#{genre.name}"
+                                            itemValue="#{genre}" required="true" requiredMessage="#{msg.required_genre}"/>
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>#{msg.publisher}</p>
+
+                        <div class="ava-form">
+                            <p:autoComplete id="publisherList" dropdown="true" converter="#{publisherConverter}"
+                                            var="publisher"
+                                            value="#{bookController.selectedBook.publisher}"
+                                            completeMethod="#{publisherController.find}" itemLabel="#{publisher.name}"
+                                            itemValue="#{publisher}" required="true" requiredMessage="#{msg.required_publisher}"/>
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>ISBN</p>
+
+                        <div class="ava-form">
+                            <p:inputText id="isbn" value="#{bookController.selectedBook.isbn}" required="true" requiredMessage="#{msg.required_isbn}" />
+                        </div>
+                    </div>
+
+
+                    <div class="block">
+                        <p>#{msg.year}</p>
+
+                        <div class="ava-form">
+                            <p:inputMask id="year" value="#{bookController.selectedBook.publishYear}"  maxlength="4" placeHolder="_" mask="9999" required="true" requiredMessage="#{msg.required_year}"/>
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>#{msg.page_count}</p>
+
+                        <div class="ava-form">
+                            <p:inputNumber id="page_count" value="#{bookController.selectedBook.pageCount}"
+                                           decimalPlaces="0" thousandSeparator="" required="true" requiredMessage="#{msg.required_page_count}"/>
+                        </div>
+                    </div>
+
+                    <div class="block">
+                        <p>#{msg.content}</p>
+
+                        <div class="ava-form">
+                            <div class="loaded">
+
+                                <p:fileUpload id="contentUpload" fileUploadListener="#{bookController.uploadContent}"
+                                              mode="advanced"
+                                              dragDropSupport="true" label="#{msg.content_load}" auto="true"
+                                              styleClass="ui-fileupload"
+                                              update="content_upload_messages"
+                                              allowTypes="/(\.|\/)(pdf)$/"/>
+
+                                <p:growl id="content_upload_messages" showDetail="true"/>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="block">
+                        <p>#{msg.descr} <span><h:outputText id="counter" /></span></p>
+                        <p:inputTextarea cols="30" id="descr" value="#{bookController.selectedBook.descr}"
+                                         required="false"/>
+                        <div class="ava-form">
+                            <p:commandButton value="#{msg.save}" update="@([id$=booksList])" process="@form" actionListener="#{bookController.save}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </p:dialog>
+</f:view>
+</html>

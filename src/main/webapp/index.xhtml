@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>${msg.online_library}</title>
+    <h:outputStylesheet name="css/index.css"/>
+</h:head>
+<h:body>
+    <f:view locale="#{localeChanger.currentLocale}">
+
+        <div id="login">
+        <h:outputText id="loginFailed" value="#{userController.loginFailedMessage}" styleClass="error"/>
+        <form id="login_form" action="#{request.contextPath}/login" method="post">
+
+            <span class="fontawesome-user"></span>
+            <input
+                    type="text" id="username" name="username" class="ui-corner-all"
+                    required="required" placeholder="username"/>
+
+            <span class="fontawesome-lock"></span>
+            <input type="password" id="password" name="password"
+                   class="ui-corner-all" required="required" placeholder="password"/>
+
+            <input type="submit" value="#{msg.login}"/>
+        </form>
+        </div>
+    </f:view>
+</h:body>
+</html>

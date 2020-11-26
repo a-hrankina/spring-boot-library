@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+
+    <b:row>
+        <div class="genres">
+            <p:commandLink styleClass="list-group-item all-genres" actionListener="#{bookController.showAll()}"
+                           update="@([id$=booksList])">
+                <p:outputLabel value="#{msg.all_genres}" styleClass="genre-name all-genres"/>
+            </p:commandLink>
+
+            <p:repeat value="#{genreController.all}" var="genre">
+
+                <p:commandLink class="list-group-item" actionListener="#{bookController.showBooksByGenre(genre.id)}"
+                               update="@([id$=booksList])">
+                    <p:outputLabel value="#{genre.name}" styleClass="genre-name"/>
+                </p:commandLink>
+
+            </p:repeat>
+        </div>
+    </b:row>
+</f:view>
+</html>

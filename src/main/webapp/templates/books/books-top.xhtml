@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<f:view>
+    <div class="box">
+        <div class="main2">
+            <div class="module-specials">
+                <div class="boxIndent">
+                    <ul class="box-product">
+
+                        <li>
+                            <p:repeat value="#{bookController.topBooks}" var="book">
+
+                                <div class="row-product">
+                                    <div class="featuredIndent">
+                                        <div class="product_image_container">
+
+                                            <div class="product_image_shadow">
+                                                <h:outputLink value="#{request.contextPath}/PdfContent" target="_blank">
+                                                    <o:graphicImage width="157" height="236" value="#{book.image}"
+                                                                    dataURI="true"/>
+                                                    <f:param name="id" value="#{book.id}"/>
+                                                    <f:param name="filename" value="#{book.name}"/>
+
+                                                    <f:param name="viewCount" value="#{book.viewCount}"/>
+                                                </h:outputLink>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:repeat>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</f:view>
+</html>

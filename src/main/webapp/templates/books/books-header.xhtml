@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:o="http://omnifaces.org/ui">
+<f:view>
+    <div class="header-div">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+                    <div style="width: 50%">
+                        <ul class="nav navbar-nav">
+
+                            <ui:fragment>
+                                <li><o:graphicImage name="images/books.png" style="height:50px; padding:10px;"
+                                                    dataURI="true"/></li>
+                            </ui:fragment>
+
+                            <ui:fragment rendered="${userController.hasRole('ADMIN')}">
+                                <li><h:outputLink value="#{request.contextPath}/pages/dictionaries.xhtml"
+                                > #{msg.dict}</h:outputLink></li>
+                            </ui:fragment>
+
+
+                            <ui:fragment rendered="${userController.hasRole('ADMIN')}">
+                                <li class="colored"><p:commandLink title="Add button"
+                                                                   rendered="${userController.hasRole('ADMIN')}"
+                                                                   actionListener="#{bookController.addAction()}"
+                                                                   update="@([id$=dialogEditBook])"
+                                                                   styleClass="new-book-item"><p:outputLabel
+                                        value="#{msg.add_book}" styleClass="new-book-label"/></p:commandLink></li>
+                            </ui:fragment>
+                        </ul>
+                    </div>
+
+                    <div style="width:50%; float: right">
+                        <div style="width:50%; float: left; padding-right: 20px; padding-left: 20px; height: 50px;">
+                            <h:form styleClass="search-form">
+
+                                <p:inputText style="margin-right:10px" placeholder="#{msg.search}"
+                                             value="#{bookController.searchText}" styleClass="search"/>
+                                <p:commandButton styleClass="search-button" value="search" process="@form"
+                                                 update="@([id$=booksList]) "
+                                                 actionListener="#{bookController.searchAction}"
+                                                 style="visibility: hidden"/>
+                            </h:form>
+                        </div>
+                        <ui:include src="../part/logout.xhtml"/>
+                    </div>
+                    <ui:include src="../part/locales.xhtml"/>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <p:ajaxStatus id="ajaxStatusPanel">
+        <f:facet name="start">
+            <div id="loading_wrapper">
+                <p>#{msg.loading}...</p>
+            </div>
+        </f:facet>
+
+        <f:facet name="complete">
+            <h:outputText value=""/>
+        </f:facet>
+    </p:ajaxStatus>
+
+</f:view>
+</html>

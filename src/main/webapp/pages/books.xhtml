@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:o="http://omnifaces.org/ui">
+<h:body>
+
+
+    <ui:composition template="/templates/books/books-template.xhtml">
+
+
+        <ui:define name="content">
+
+
+            <ui:include src="/templates/dialogs/edit-dialog.xhtml"/>
+            <ui:include src="/templates/dialogs/confirm-dialog.xhtml"/>
+
+
+            <!-- форма должны быть вне таблицы с данными, чтобы отрабатывать все кнопки и ссылки внутри формы -->
+            <h:form id="booksForm">
+
+                <p:dataGrid id="booksList" var="book" value="#{bookController.lazyModel}" columns="5"
+                            paginatorPosition="bottom"
+                            paginator="true"
+                            rows="#{bookController.rowsCount}"
+                            emptyMessage=""
+                            rowIndexVar="rowIndexVar"
+                            rowsPerPageTemplate="10,15,20,30"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            lazy="true">
+
+
+                    <!--результаты поиска-->
+                    <f:facet name="header">
+                        <p:outputPanel styleClass="table-header">
+                            <p:outputLabel value="#{msg.founded}: #{bookController.bookPages.totalElements} "/>
+                            <p:outputLabel value="&#160;(#{bookController.getSearchMessage()})"
+                                           rendered="#{bookController.getSearchMessage() != null}"/>
+                        </p:outputPanel>
+
+                    </f:facet>
+
+
+                    <!--карточка с данными книги-->
+                    <p:outputPanel styleClass="card">
+
+                        <!--обложка книги-->
+                        <div class="book-icon">
+                            <h:outputLink value="#{request.contextPath}/PdfContent" target="_blank"
+                                          styleClass="read-link">
+                                <f:param name="id" value="#{book.id}"/>
+                                <f:param name="viewCount" value="#{book.viewCount}"/>
+                                <o:graphicImage cache="false" value="#{book.image}" dataURI="true" />
+                            </h:outputLink>
+                        </div>
+
+
+
+                        <!--описание книги-->
+                        <div class="book-info">
+                            <div class="author">
+                                <h:outputText value="#{book.author.fio}" styleClass="author"/>
+                            </div>
+
+
+                            <!-- нижняя часть под картинкой -->
+                            <div class="add-info">
+                                <div style="width:10%; float:left;">
+                                    <o:graphicImage name="images/see.png" styleClass="see-count"/>
+                                </div>
+
+                                <!-- кол-во просмотров -->
+                                <div style="width:20%; float:left; margin-left: 10px; font-size: 14px;">
+                                    <h:outputText value="#{book.viewCount}" styleClass="view-count" id="viewCountLabel"/>
+                                </div>
+
+                                <!--голосование-->
+
+                                <div style="width:60%; float:right;">
+                                    <p:rating id="rating" value="#{book.avgRating}" styleClass="rating"
+                                              cancel="false"
+                                              stars="5">
+                                        <p:ajax event="rate" listener="#{bookController.onrate}"
+                                                update="@([id$=booksList])"
+                                                onsuccess="alert('Спасибо')"/>
+                                        <f:param name="bookIndex" value="#{rowIndexVar}"/>
+                                    </p:rating>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <!--инструменты администратора (редактирование, удаление)-->
+                        <p:outputPanel layout="block" styleClass="admin-region"
+                                       rendered="${userController.hasRole('ADMIN')}">
+
+
+                            <p:commandLink title="#{msg.delete}"
+                                           action="#{bookController.deleteAction()}" update=":booksForm:booksList">
+                                <p:confirm header="#{msg.confirm}" message="#{msg.prompt_delete}"
+                                           icon="ui-icon-alert"/>
+
+                                <f:setPropertyActionListener value="#{book}"
+                                                             target="#{bookController.selectedBook}"/>
+
+                                <o:graphicImage name="images/delete.png" styleClass="delete-icon" dataURI="true"/>
+
+                            </p:commandLink>
+
+                            <p:commandLink title="#{msg.edit}"
+                                           action="#{bookController.editAction()}"
+                                           update="@([id$=dialogEditBook])">
+                                <f:setPropertyActionListener value="#{book}"
+                                                             target="#{bookController.selectedBook}"/>
+                                <o:graphicImage name="images/edit.png" styleClass="edit-icon" dataURI="true"/>
+                            </p:commandLink>
+                        </p:outputPanel>
+
+
+                    </p:outputPanel>
+
+
+                </p:dataGrid>
+            </h:form>
+
+
+        </ui:define>
+
+
+    </ui:composition>
+
+
+</h:body>
+
+</html>
